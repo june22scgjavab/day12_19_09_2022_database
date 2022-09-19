@@ -176,3 +176,147 @@ I cannot insert a roll in the marks table which is not existing in the Student t
 INSERT INTO marks VALUES(111,1,70);      -- This record will be inserted
 INSERT INTO marks VALUES(222,5,89);      -- The record will not get inserted because the roll 5 is not present in the parent table
                                          -- student
+-----------------------------------------------------------------------
+
+After this try to drop the table student. Will you be able to drop the master or the parent table when we have some of the 
+records mentioned in the child table from the master table?
+Ans We cannot drop the master table which is Student here. 
+ORA-02449: unique/primary keys in table referenced by foreign keys.
+
+Reason for the error:
+
+The values of the primary/unique key column(s) from the parent table are referred to in the foreign key column of the child table (referential integrity). This reference will
+ not allow the master table to be dropped prior to the child table.
+
+Is vice-versa is possible. Which means we will delete or drop child table. Is it possible?
+Ans Yes. So the Child table can be dropped while it is refering to some record/records in the master or parent table.
+
+Anways is it possible to drop the master table?
+Yes
+Step 1: Execute the DROP statement for Marks (child table) as given below:
+
+DROP TABLE Marks;
+
+Step 2: Execute the DROP statement for Student (parent table) as given below:
+
+DROP TABLE Student;
+Both the tables will be dropped successfully from the database.
+
+Reason: When the child table is dropped first, the values that are referred to are removed. So, now the parent table can be dropped from the database without any error.
+
+Conclusion: Drop all the child tables first, then drop all the parent tables.
+-----------------------------------------------------------------------------------------------------------------------------------
+An alternate method to drop table is given below:
+
+DROP TABLE <Table name> CASCADE CONSTRAINTS;
+
+Step 1: Execute the DROP statement for Student (parent table) as given below:
+
+DROP TABLE Student CASCADE CONSTRAINTS;
+Step 2: Execute the DROP statement for Marks (child table) as given below:
+
+
+DROP TABLE Marks CASCADE CONSTRAINTS;
+Both the tables will be dropped successfully from the database.
+
+Reason: Since the referential integrity constraint is dropped from the parent table, the parent table can be dropped first, followed by the child table.
+
+The primary key (Studentid) values of the parent table (Student) 1001 and 1002 are referred to in the foreign key (Studentid) of the child table (Marks). The clause CASCADE CONSTRAINTS will remove all referential integrity constraints that refer to the primary or unique keys in the table.
+
+The referential integrity constraints that refer to the primary key (Studentid) values of the parent table (Student) 1001 and 1002 are removed. So, now the parent table (Student) can be dropped before the child table (Marks).
+
+Conclusion: CASCADE CONSTRAINTS clause will drop all the referential integrity constraints that refer to the primary or unique keys in the table. Hence all the parent tables can be dropped before the child tables.
+
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+*NOT NULL
+
+*PRIMARY KEY
+
+*CHECK
+
+*UNIQUE
+
+*FOREIGN KEY
+
+We can also specify DEFAULT value for a column. Oracle database does not consider DEFAULT as a constraint.
+-----------------------------------------------------------------------------------------------------------------------------
+CREATE TABLE Student (
+    StudentId INTEGER CONSTRAINT Stud_SId_nn NOT NULL,
+    FName VARCHAR2(10) NOT NULL,
+    LName VARCHAR2(10));
+OR
+
+CREATE TABLE Student (
+    StudentId INTEGER  NOT NULL,
+    FName VARCHAR2(10) NOT NULL,
+    LName VARCHAR2(10));
+  --------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE Student (
+    StudentId INTEGER CONSTRAINT stud_id_pk  PRIMARY KEY,
+    FName VARCHAR2(10),
+    LName VARCHAR2(10));
+
+In this case in StudentId, we wont be able to insert NULL value as it is a primary key.
+But for rest of the columns in above example , we can insert the null value.
+
+INSERT INTO Student VALUES(1,'Ravi',null);  ==> So by default excluding the primary key , in all other non-primary key , we can insert null value.
+INSERT INTO Student(studentid,fname) VALUES(3,'Ashok');  => In this case we are not explicitly inserting the null as we are doing in the previous line. 
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+Primary key
+
+CREATE TABLE Student ( 
+    StudentId INTEGER CONSTRAINT stud_sid_pk PRIMARY KEY,
+    FName VARCHAR2(10), 
+    ContactNo NUMBER(10));
+
+
+INSERT INTO stydent VALUES(1,'Amar',76453210);
+INSERT INTO stydent VALUES(null,'Neha',66453230);
+
+
+In the above example we are trying to insert a null value in the table student id's where studentId is a primary key and we cannot insert null
+value in the primary key.
+Try to insert the same studentId as 1 for the 3rd insertion of record.
+
+INSERT INTO stydent VALUES(1,'Kumar',76453210);
+
+/* We get an error while inserting the record as we cannot insert the same StudentId which is already available in the table. */
+-------------------------------------------------------------------------------------------------------------------------------------------
+Check constraint
+
+CREATE TABLE Student ( 
+    StudentId INTEGER, 
+    FName VARCHAR2(10), 
+    Gender CHAR(1) CONSTRAINT Stud_gender_ck1 CHECK(Gender IN('M', 'F'))); 
+)
+
+/* In the above example we have applied a check constraint on Gender. Where we are expecting that only M or F can be inserted. 
+
+INSERT INTO student VALUES(1,'Jiten','C'); -- the SQL statement while executing will show the error related to check constraint violation 
+as we have to enter the data which are mentioned as the part of check constraint in the form of IN operator. So we can enter either M or F
+for Gender but we tried inserting the character C in gender which is not permisible. */
+
+
+
+CREATE TABLE Employee ( 
+    StudentId INTEGER, 
+    FName VARCHAR2(10), 
+    Gender CHAR(1) CONSTRAINT Employee_gender_ck1 CHECK(Gender IN('M', 'F')),
+    basic INTEGER CONSTRAINT Employee_basic_ck2 CHECK(basic>10000)
+
+); 
+
+ INSERT INTO Employee VALUESE(1,'Ravi','M',5000); -- Again error will be shown while executing this command because it violating the check constraint
+where the basic is expected to be greater than 10000 but we are entering basic as 5000 which is lesser than the value mentioned in the check constraint for basic.
+INSERT INTO Employee VALUESE(1,'Ravi','M',15000); -- This record will be accepted as M is valid data for the check constraint mentioned for gender
+ and 15000 is a valid data as a part of check constraint for basic as basic should ne more than 10000.
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+
+UNIQUE constraint on a column ensures that two rows in a table cannnot have same value in that column. Unlike Primary Key, UNIQUE constraint allows NULL values. A table can have many UNIQUE constraints whereas per table we can have only one primary key.
+--------------------------------------------------------------------------------------------------------------------------------------
+
