@@ -1,0 +1,178 @@
+We are able to see a table/relation. Table is nothing but a combination of rows and columns.
+Columns represent fields and row represent records/rows/tuples. id,ename,salary,bonus and
+dept are fields or columns and the
+1 James Potter 75000 1000 ICP , this one is an entire record. We can see multiple
+records. So in the above table for the record whose id is 3 and Ename is
+Emily Rayner, for that record the bonus in null ( undefined or unknown value). 
+null in OOPS concept also.
+
+public class Employee {}
+
+Employee emp=null;
+
+// The reference variable emp is not storing the reference of any newly or already created
+// object.
+
+emp=new Employee(); //now it is refering to a newly created object.
+
+So in case of Object oriented programming null is used to initialise a reference variable
+if we dont want to initialise the reference variable with an Object's reference ( address).
+But in case of RDBMS (Relation Database Management System), null means undefined or unknown value.
+
+Cardinality of a table/relation is number of rows/records/tuples. So the cardinality is 4. 
+
+Degree of a table/relation is number of columns/fields/attributes. So in the example degree is 5.
+
+Domain of a column is allowed value in a column. Example suppose we are looking for designations so the domain
+for designation will be like Manager, Asst Manager, Developer, Analyst. So basically it is the allowed 
+values in a particular column. Suppose we want to store Departments and the allowed values are Sales, Mkt, Development, HR.
+So the domain values accepted for Department are Sales, Mkt, Development and HR.
+So if we enter suppose stores, they wont be accepted. 
+
+
+Candidate Key:- The minimal key combinations that can be used to identify a record uniquely.
+Primary Key:-- Out of those keys which can identify a record, we select one of them as Primary key.
+Alternate Key:--- Rest of the keys which are not primary key but was elgible for primary key.
+----------------------------------------------------------------------------------------------------------------------------
+
+
+courses 
+
+courseId       description
+C0001          Programming using Java
+C0002          DBMS
+
+
+students
+employeeId  empname  
+E0001       Jeenia
+E0002       Lokesh
+E0003       Sirish
+
+
+result
+employeeId courseId  score
+E0001      C0001     70
+E0001      C0002     80
+E0002      C0001     86
+E0002      C0002     90
+
+
+---------------------------------------------------------------------------------------------------------------------
+Primary key and foreign key names can be same or different.
+
+employee_manager_details
+empId================>Primary key
+employeeName
+dept
+basic
+mgrId================>Foreign key ====> primary key in the same table
+
+
+E0001 Ravi   Sales 23000 null
+E0002 Seema  Sales 14000 E0001
+E0003 Ravi   Mkt   23000 null
+E0004 Shreya Mkt   15000 E0003
+E0006 Rahul  Mkt   16000 E0003
+ 
+-----------------------------------------------------------------------------------------------------------------------------------
+char(10)
+hello_____
+
+
+
+CREATE TABLE data(
+  score NUMBER(3,1)
+ )
+
+   12.1 ===> total number of digit ( before and after decimal) ====> precision
+   So how to decide how many digits we can have before decimal
+    no_of_digits before decimal=precision-scale
+   Scale in the number of digits after decimal
+
+
+
+
+
+CREATE TABLE data(
+  score NUMBER(3,1)
+ )
+ 12.32===> here we are entering 2 digits in place of 1
+ So ultimately we have to round of two the scale mentioned
+
+ 12.3
+
+ 12.36====>
+ 12.4 
+
+ 12.1
+ 12.1
+
+ Before decimal , the number of digits allowed will be
+
+ 3-1=2 ( 2 digits will be allowed before decimal)
+
+ 123.3 ===> Error as we have entered 3 digits before decimal but we are allowed to enter the number of
+         digits same ore lesser then the value which we got after subtracting scale from precision.
+
+ 12.3 ===> It will be stored
+ 1.3======>It will be stored
+
+!= Not equal to
+<>====> Not equal to
+--------------------------------------------------------------------------------
+IS SQL case sensitive?
+Ans NO
+
+We try to follow the convention as keywords we write in uppercase and identifiers we write in 
+smallcase.
+
+CREATE TABLE student(
+roll INTEGER,
+name VARCHAR2(20),
+dob DATE
+)
+
+OR
+
+create table student(
+roll integer,
+name varchar2(20),
+dob date
+) 
+/*                                              
+   In the above create statement we have not declared any primary key.
+
+*/
+To Drop a table , the command is
+DROP TABLE <tablename>;
+------------------------------------------------------------------------------------------------------------------------
+
+
+CREATE TABLE Student ( 
+    studentroll INTEGER CONSTRAINT stud_roll_pk PRIMARY KEY,
+    name VARCHAR2(10), 
+    dob DATE;
+/*                                              
+   In the above create statement we have declared roll as a primary key. 
+*/
+
+INSERT INTO student VALUES(1,'Ram','12-Feb-2000');
+INSERT INTO student VALUES(1,'Ramesh','12-Oct-2000');  -- This record wont get inserted because it is having the same roll as record 1.
+INSERT INTO student VALUES(2,'Ramesh','12-Oct-2000'); 
+INSERT INTO student VALUES(NULL,'Suresh','16-Jan-1999'); -- This record wont get inserted because null value is not allowed for the primary key
+
+CREATE TABLE marks (
+    CourseId INTEGER, 
+    roll INTEGER CONSTRAINT marks_roll_fk REFERENCES Student (studentroll), 
+    MarksScored DECIMAL (5,2)
+);
+
+
+/* The above example is of relating two tables with primary key and foreign key.  
+So here we can see the studentroll is a primary key in the Student table which is refered by roll of marks table.Which means
+I cannot insert a roll in the marks table which is not existing in the Student table */
+
+INSERT INTO marks VALUES(111,1,70);      -- This record will be inserted
+INSERT INTO marks VALUES(222,5,89);      -- The record will not get inserted because the roll 5 is not present in the parent table
+                                         -- student
